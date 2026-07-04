@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../services/api";
+import useAuth from "../../hooks/useAuth";
 
 function Login() {
 
@@ -8,6 +9,8 @@ function Login() {
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
+
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
 
@@ -17,19 +20,11 @@ function Login() {
 
       const response = await API.post("/auth/login", {
         email,
-        password,
+        password
       });
 
-      console.log("Login Success:", response.data);
+      login(response.data.user, response.data.token);
 
-      // Store JWT
-      localStorage.setItem("token", response.data.token);
-
-      // Clear the form
-      setEmail("");
-      setPassword("");
-
-      // Redirect
       navigate("/dashboard");
 
     } catch (error) {

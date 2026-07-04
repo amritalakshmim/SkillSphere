@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../services/api";
+import useAuth from "../../hooks/useAuth";
 
 function Register() {
 
@@ -9,6 +10,8 @@ function Register() {
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
+
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
 
@@ -24,15 +27,12 @@ function Register() {
 
       console.log("Register Success:", response.data);
 
-      // Store JWT
-      localStorage.setItem("token", response.data.token);
+      login(response.data.user, response.data.token);
 
-      // Clear the form
       setName("");
       setEmail("");
       setPassword("");
 
-      // Redirect
       navigate("/dashboard");
 
     } catch (error) {
