@@ -1,4 +1,5 @@
 import { createContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import API from "../services/api";
 
 const AuthContext = createContext();
@@ -6,6 +7,8 @@ const AuthContext = createContext();
 function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem("token"));
+
+  const navigate = useNavigate();
 
   const login = (userData, userToken) => {
     localStorage.setItem("token", userToken);
@@ -17,6 +20,8 @@ function AuthProvider({ children }) {
     localStorage.removeItem("token");
     setToken(null);
     setUser(null);
+
+    navigate("/login");
   };
 
   useEffect(() => {
@@ -38,7 +43,6 @@ function AuthProvider({ children }) {
     };
 
     loadUser();
-    
   }, [token]);
 
   return (
