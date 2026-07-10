@@ -171,3 +171,49 @@ export const deleteGig = async (req, res) => {
 
   }
 };
+
+export const getMyGigs = async (req, res) => {
+  try {
+
+    const gigs = await Gig.find({
+      createdBy: req.user._id,
+    });
+
+    res.status(200).json({
+      success: true,
+      count: gigs.length,
+      gigs,
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+
+  }
+};
+
+export const getGigById = async (req, res) => {
+  try {
+    const gig = await Gig.findById(req.params.id);
+
+    if (!gig) {
+      return res.status(404).json({
+        success: false,
+        message: "Gig not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      gig,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

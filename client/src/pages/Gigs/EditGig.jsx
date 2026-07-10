@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import API from "../../services/api";
 
-function CreateGig() {
+function EditGig() {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -13,6 +13,33 @@ function CreateGig() {
     experienceLevel: "Beginner",
     deadline: "",
   });
+
+  const { id } = useParams();
+
+  const loadGig = async () => {
+    try {
+      const response = await API.get(`/gigs/${id}`);
+
+      const gig = response.data.gig;
+
+      setFormData({
+        title: gig.title,
+        description: gig.description,
+        budget: gig.budget,
+        location: gig.location,
+        category: gig.category,
+        skills: gig.skills.join(", "),
+        experienceLevel: gig.experienceLevel,
+        deadline: gig.deadline.split("T")[0],
+      });
+    } catch (error) {
+      console.log(error.response?.data || error.message);
+    }
+  };
+
+  useEffect(() => {
+    loadGig();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({
@@ -35,10 +62,9 @@ function CreateGig() {
     };
 
     try {
-      await API.post("/gigs", gigData);
+      await API.put(`/gigs/${id}`, gigData);
 
       navigate("/gigs");
-
     } catch (error) {
       console.log(error.response?.data || error.message);
     }
@@ -46,7 +72,7 @@ function CreateGig() {
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Create New Gig</h1>
+      <h1 className="text-3xl font-bold mb-6">Edit Gig</h1>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* <pre>{JSON.stringify(formData, null, 2)}</pre> */}
@@ -167,11 +193,11 @@ function CreateGig() {
           type="submit"
           className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
         >
-          Create Gig
+          Save Changes
         </button>
       </form>
     </div>
   );
 }
 
-export default CreateGig;
+export default EditGig;

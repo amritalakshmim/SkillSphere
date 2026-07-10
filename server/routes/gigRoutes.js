@@ -1,6 +1,6 @@
 import express from "express";
 import { protect } from "../middleware/authMiddleware.js";
-import { createGig, getAllGigs, updateGig, deleteGig } from "../controllers/gigController.js";
+import { createGig, getAllGigs, getMyGigs, getGigById, updateGig, deleteGig } from "../controllers/gigController.js";
 
 const router = express.Router();
 
@@ -8,6 +8,10 @@ const router = express.Router();
 router.post("/", protect, createGig);
 
 router.get("/", getAllGigs);
+
+router.get("/my", protect, getMyGigs);
+
+router.get("/:id", getGigById);
 
 router.put("/:id", protect, updateGig);
 
