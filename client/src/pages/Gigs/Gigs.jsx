@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import API from "../../services/api";
 import GigCard from "../../components/GigCard";
-import { useNavigate } from "react-router-dom";
+import EmptyState from "../../components/EmptyState";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 function Gigs() {
   const [gigs, setGigs] = useState([]);
@@ -21,9 +24,11 @@ function Gigs() {
     try {
       await API.delete(`/gigs/${id}`);
 
-      loadGigs();
+      setGigs((prevGigs) => prevGigs.filter((gig) => gig._id !== id));
+
+      toast.success("Gig deleted successfully!");
     } catch (error) {
-      console.log(error.response?.data || error.message);
+      toast.error(error.response?.data?.message || "Failed to delete gig.");
     }
   };
 
@@ -61,11 +66,37 @@ function Gigs() {
       </div>
 
       {loading ? (
-        <p>Loading gigs...</p>
+        <p><LoadingSpinner text="Loading gigs..." /></p>
+      ) : gigs.length === 0 ? (
+        <div className="bg-white rounded-xl shadow-md p-10 text-center">
+          <h2 className="text-2xl font-semibold text-gray-700">
+            📂 No Gigs Yet
+          </h2>
+
+          <EmptyState
+            icon="📂"
+            title="No Gigs Yet"
+            description="You haven't created any gigs yet."
+            buttonText="Create Your First Gig"
+            buttonLink="/create-gig"
+          />
+
+          <button
+            onClick={() => navigate("/create-gig")}
+            className="mt-6 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg"
+          >
+            Create Your First Gig
+          </button>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {gigs.map((gig) => (
-            <GigCard key={gig._id} gig={gig} onEdit={handleEdit} onDelete={handleDelete}/>
+            <GigCard
+              key={gig._id}
+              gig={gig}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
           ))}
         </div>
       )}
@@ -74,19 +105,3 @@ function Gigs() {
 }
 
 export default Gigs;
-
-// if (!loading && gigs.length === 0) {
-//   return (
-//     <div className="p-6">
-
-//       <h1 className="text-3xl font-bold mb-6">
-//         My Gigs
-//       </h1>
-
-//       <p className="text-gray-500">
-//         You haven't created any gigs yet.
-//       </p>
-
-//     </div>
-//   );
-// }

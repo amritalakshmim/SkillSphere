@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import { CATEGORIES } from "../../constants/categories";
+import { EXPERIENCE_LEVELS } from "../../constants/experienceLevels";
 import API from "../../services/api";
 
 function EditGig() {
@@ -33,7 +36,7 @@ function EditGig() {
         deadline: gig.deadline.split("T")[0],
       });
     } catch (error) {
-      console.log(error.response?.data || error.message);
+      toast.error("Failed to load gig.");
     }
   };
 
@@ -64,9 +67,13 @@ function EditGig() {
     try {
       await API.put(`/gigs/${id}`, gigData);
 
-      navigate("/gigs");
+      toast.success("Gig updated successfully!");
+
+      setTimeout(() => {
+        navigate("/gigs");
+      }, 1000);
     } catch (error) {
-      console.log(error.response?.data || error.message);
+      toast.error(error.response?.data?.message || "Failed to update gig.");
     }
   };
 
@@ -136,14 +143,20 @@ function EditGig() {
         <div>
           <label className="block font-medium mb-2">Category</label>
 
-          <input
-            type="text"
+          <select
             name="category"
             value={formData.category}
             onChange={handleChange}
             className="w-full border rounded-lg p-3"
-            placeholder="Web Development"
-          />
+          >
+            <option value="">Select Category</option>
+
+            {CATEGORIES.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
         </div>
 
         {/* Experience Level */}
@@ -156,9 +169,13 @@ function EditGig() {
             onChange={handleChange}
             className="w-full border rounded-lg p-3"
           >
-            <option value="Beginner">Beginner</option>
-            <option value="Intermediate">Intermediate</option>
-            <option value="Expert">Expert</option>
+            <option value="">Select Experience Level</option>
+
+            {EXPERIENCE_LEVELS.map((level) => (
+              <option key={level} value={level}>
+                {level}
+              </option>
+            ))}
           </select>
         </div>
 

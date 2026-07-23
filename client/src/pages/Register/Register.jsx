@@ -4,6 +4,7 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 
 import API from "../../services/api";
 import AuthLayout from "../../components/AuthLayout";
+import useAuth from "../../hooks/useAuth";
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -27,6 +28,8 @@ function Register() {
   };
 
   const navigate = useNavigate();
+
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -54,9 +57,10 @@ function Register() {
     try {
       const response = await API.post("/auth/register", userData);
 
-      console.log(response.data);
+      login(response.data.user, response.data.token);
 
-      navigate("/login");
+      navigate("/dashboard");
+      
     } catch (error) {
       setError(error.response?.data?.message || "Registration failed");
     } finally {

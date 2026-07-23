@@ -2,7 +2,6 @@ import Gig from "../models/Gig.js";
 
 export const createGig = async (req, res) => {
   try {
-
     const {
       title,
       description,
@@ -15,13 +14,7 @@ export const createGig = async (req, res) => {
     } = req.body;
 
     // Validate required fields
-    if (
-      !title ||
-      !description ||
-      !budget ||
-      !location ||
-      !category
-    ) {
+    if (!title || !description || !budget || !location || !category) {
       return res.status(400).json({
         success: false,
         message: "Please provide all required fields",
@@ -47,20 +40,16 @@ export const createGig = async (req, res) => {
       message: "Gig created successfully",
       gig,
     });
-
   } catch (error) {
-
     res.status(500).json({
       success: false,
       message: error.message,
     });
-
   }
 };
 
 export const getAllGigs = async (req, res) => {
   try {
-
     const gigs = await Gig.find()
       .populate("createdBy", "name email")
       .sort({ createdAt: -1 });
@@ -70,20 +59,16 @@ export const getAllGigs = async (req, res) => {
       count: gigs.length,
       gigs,
     });
-
   } catch (error) {
-
     res.status(500).json({
       success: false,
       message: error.message,
     });
-
   }
 };
 
 export const updateGig = async (req, res) => {
   try {
-
     const { id } = req.params;
 
     const gig = await Gig.findById(id);
@@ -105,34 +90,26 @@ export const updateGig = async (req, res) => {
     }
 
     // Update the gig
-    const updatedGig = await Gig.findByIdAndUpdate(
-      id,
-      req.body,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+    const updatedGig = await Gig.findByIdAndUpdate(id, req.body, {
+      new: true,
+      runValidators: true,
+    });
 
     res.status(200).json({
       success: true,
       message: "Gig updated successfully",
       gig: updatedGig,
     });
-
   } catch (error) {
-
     res.status(500).json({
       success: false,
       message: error.message,
     });
-
   }
 };
 
 export const deleteGig = async (req, res) => {
   try {
-
     const { id } = req.params;
 
     // Find the gig
@@ -161,20 +138,16 @@ export const deleteGig = async (req, res) => {
       success: true,
       message: "Gig deleted successfully",
     });
-
   } catch (error) {
-
     res.status(500).json({
       success: false,
       message: error.message,
     });
-
   }
 };
 
 export const getMyGigs = async (req, res) => {
   try {
-
     const gigs = await Gig.find({
       createdBy: req.user._id,
     });
@@ -184,20 +157,20 @@ export const getMyGigs = async (req, res) => {
       count: gigs.length,
       gigs,
     });
-
   } catch (error) {
-
     res.status(500).json({
       success: false,
       message: error.message,
     });
-
   }
 };
 
 export const getGigById = async (req, res) => {
   try {
-    const gig = await Gig.findById(req.params.id);
+    const gig = await Gig.findById(req.params.id).populate(
+      "createdBy",
+      "name email",
+    );
 
     if (!gig) {
       return res.status(404).json({

@@ -16,7 +16,7 @@ export const getUserProfile = async (req, res) => {
 
 export const updateUserProfile = async (req, res) => {
   try {
-    const { name, email } = req.body;
+    const { name, email, qualification, experience, skills, about } = req.body;
 
     // Update only if values are provided
     if (name) {
@@ -43,6 +43,24 @@ export const updateUserProfile = async (req, res) => {
       req.user.email = normalizedEmail;
     }
 
+    if (qualification !== undefined) {
+      req.user.qualification = qualification.trim();
+    }
+
+    if (experience !== undefined) {
+      req.user.experience = experience.trim();
+    }
+
+    if (skills !== undefined) {
+      req.user.skills = skills
+        .map((skill) => skill.trim())
+        .filter((skill) => skill !== "");
+    }
+
+    if (about !== undefined) {
+      req.user.about = about.trim();
+    }
+
     // Save updated user
     await req.user.save();
 
@@ -54,6 +72,10 @@ export const updateUserProfile = async (req, res) => {
         name: req.user.name,
         email: req.user.email,
         role: req.user.role,
+        qualification: req.user.qualification,
+        experience: req.user.experience,
+        skills: req.user.skills,
+        about: req.user.about,
       },
     });
   } catch (error) {

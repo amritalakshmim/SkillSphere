@@ -1,4 +1,6 @@
-function GigCard({ gig, onEdit, onDelete }) {
+import { Link } from "react-router-dom";
+
+function GigCard({ gig, mode = "manage", onEdit, onDelete }) {
   return (
     <div className="bg-white rounded-xl shadow-md p-6 border hover:shadow-lg transition">
       <h2 className="text-2xl font-bold">{gig.title}</h2>
@@ -8,7 +10,9 @@ function GigCard({ gig, onEdit, onDelete }) {
       <div className="mt-5 space-y-2">
         <p>
           💰
-          <span className="font-semibold">₹ {gig.budget.toLocaleString()}</span>
+          <span className="font-semibold">
+            ₹ {gig.budget.toLocaleString()}
+          </span>
         </p>
 
         <p>📍 {gig.location}</p>
@@ -33,21 +37,30 @@ function GigCard({ gig, onEdit, onDelete }) {
         </div>
       </div>
 
-      <div className="flex justify-end gap-3 mt-6">
-        <button
-          onClick={() => onEdit(gig._id)}
-          className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600"
-        >
-          ✏ Edit
-        </button>
+      {mode === "manage" ? (
+        <div className="flex justify-end gap-3 mt-6">
+          <button
+            onClick={() => onEdit(gig._id)}
+            className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600"
+          >
+            ✏ Edit
+          </button>
 
-        <button
-          onClick={() => onDelete(gig._id)}
-          className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+          <button
+            onClick={() => onDelete(gig._id)}
+            className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+          >
+            🗑 Delete
+          </button>
+        </div>
+      ) : (
+        <Link
+          to={`/gigs/${gig._id}`}
+          className="block mt-6 text-center bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition"
         >
-          🗑 Delete
-        </button>
-      </div>
+          View Details
+        </Link>
+      )}
     </div>
   );
 }

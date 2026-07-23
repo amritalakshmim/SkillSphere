@@ -7,7 +7,7 @@ function HeroGigCard({ title, budget, location, skills }) {
       </h3>
 
       <p className="text-blue-600 font-semibold mt-2">
-        ₹ {budget}
+        ₹ {budget.toLocaleString()}
       </p>
 
       <p className="text-gray-500 mt-1">

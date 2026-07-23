@@ -4,21 +4,21 @@ import generateToken from "../utils/generateToken.js";
 
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-    
+    const { name, email, password, role } = req.body;
+
     // Validation
     if (!name || !email || !password) {
-        return res.status(400).json({
-            success: false,
-            message: "Please provide all required fields"
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Please provide all required fields",
+      });
     }
 
     const normalizedEmail = email.toLowerCase();
 
     // Check if email already exists
-    const existingUser = await User.findOne({ 
-        email: normalizedEmail,
+    const existingUser = await User.findOne({
+      email: normalizedEmail,
     });
 
     if (existingUser) {
@@ -32,10 +32,13 @@ export const registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create user
+    const allowedRoles = ["client", "freelancer"];
+
     const user = await User.create({
       name,
       email: normalizedEmail,
       password: hashedPassword,
+      role: allowedRoles.includes(role) ? role : "client",
     });
 
     const token = generateToken(user._id);
@@ -44,14 +47,13 @@ export const registerUser = async (req, res) => {
       success: true,
       message: "User registered successfully",
       token,
-      user:  {
+      user: {
         id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
-        },
+      },
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -73,8 +75,8 @@ export const loginUser = async (req, res) => {
     }
 
     // Find user
-    const user = await User.findOne({ 
-        email: email.toLowerCase(),
+    const user = await User.findOne({
+      email: email.toLowerCase(),
     });
 
     if (!user) {
@@ -105,9 +107,8 @@ export const loginUser = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-    },
+      },
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,

@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { CATEGORIES } from "../../constants/categories";
+import { EXPERIENCE_LEVELS } from "../../constants/experienceLevels";
 import API from "../../services/api";
 
 function CreateGig() {
@@ -37,10 +40,15 @@ function CreateGig() {
     try {
       await API.post("/gigs", gigData);
 
-      navigate("/gigs");
+      toast.success("Gig created successfully!");
 
+      setTimeout(() => {
+        navigate("/gigs");
+      }, 1000);
+
+      navigate("/gigs");
     } catch (error) {
-      console.log(error.response?.data || error.message);
+      toast.error(error.response?.data?.message || "Failed to create gig.");
     }
   };
 
@@ -110,14 +118,20 @@ function CreateGig() {
         <div>
           <label className="block font-medium mb-2">Category</label>
 
-          <input
-            type="text"
+          <select
             name="category"
             value={formData.category}
             onChange={handleChange}
             className="w-full border rounded-lg p-3"
-            placeholder="Web Development"
-          />
+          >
+            <option value="">Select Category</option>
+
+            {CATEGORIES.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
         </div>
 
         {/* Experience Level */}
@@ -130,9 +144,13 @@ function CreateGig() {
             onChange={handleChange}
             className="w-full border rounded-lg p-3"
           >
-            <option value="Beginner">Beginner</option>
-            <option value="Intermediate">Intermediate</option>
-            <option value="Expert">Expert</option>
+            <option value="">Select Experience Level</option>
+
+            {EXPERIENCE_LEVELS.map((level) => (
+              <option key={level} value={level}>
+                {level}
+              </option>
+            ))}
           </select>
         </div>
 

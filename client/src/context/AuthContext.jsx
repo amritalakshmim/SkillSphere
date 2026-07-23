@@ -1,23 +1,29 @@
 import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import API from "../services/api";
 
 const AuthContext = createContext();
 
 function AuthProvider({ children }) {
+  const navigate = useNavigate();
+
   const [user, setUser] = useState(null);
+
   const [token, setToken] = useState(localStorage.getItem("token"));
 
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   const login = (userData, userToken) => {
     localStorage.setItem("token", userToken);
+
     setToken(userToken);
     setUser(userData);
   };
 
   const logout = () => {
     localStorage.removeItem("token");
+
     setToken(null);
     setUser(null);
 
@@ -26,27 +32,37 @@ function AuthProvider({ children }) {
 
   useEffect(() => {
     const loadUser = async () => {
-      if (!token) return;
+      if (!token) {
+        setLoading(false);
+        return;
+      }
 
       try {
-        const response = await API.get("/auth/me", {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await API.get("/auth/me");
 
         setUser(response.data.user);
       } catch (error) {
         console.error("Failed to load user", error);
         logout();
+      } finally {
+        setLoading(false);
       }
     };
 
     loadUser();
-  }, [token]);
+  }, [token, navigate]);
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        loading,
+        login,
+        logout,
+        setUser,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
