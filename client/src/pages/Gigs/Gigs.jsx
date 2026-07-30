@@ -66,13 +66,11 @@ function Gigs() {
       </div>
 
       {loading ? (
-        <p><LoadingSpinner text="Loading gigs..." /></p>
+        <p>
+          <LoadingSpinner text="Loading gigs..." />
+        </p>
       ) : gigs.length === 0 ? (
         <div className="bg-white rounded-xl shadow-md p-10 text-center">
-          <h2 className="text-2xl font-semibold text-gray-700">
-            📂 No Gigs Yet
-          </h2>
-
           <EmptyState
             icon="📂"
             title="No Gigs Yet"
@@ -80,13 +78,6 @@ function Gigs() {
             buttonText="Create Your First Gig"
             buttonLink="/create-gig"
           />
-
-          <button
-            onClick={() => navigate("/create-gig")}
-            className="mt-6 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg"
-          >
-            Create Your First Gig
-          </button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

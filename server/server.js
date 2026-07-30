@@ -16,7 +16,16 @@ connectDB();
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+     origin: process.env.VITE_API_URL, 
+     // [
+    //   "http://localhost:5173", // Vite development server
+    //   "https://skillsphere.vercel.app", // Replace with your actual Vercel URL
+    // ],
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 
